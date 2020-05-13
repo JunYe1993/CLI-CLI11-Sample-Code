@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "CLI11.hpp"
-// #include <CLI/CLI.hpp>
+#include <CLI/CLI.hpp>
 
 
 #define UTIL_VERSION "0.0.1"
@@ -58,7 +57,7 @@ cmd_init(CLI::App* app, std::vector<struct util_cmd_option>* opts)
     option = app->add_flag("-v, --version", "Show program version");
     opts->push_back({option, version});
 
-    option = app->add_option("-a, --add", "Add two inputs");
+    option = app->add_option("-a, --add", "Return a + b\n<a> : 0 ~ 100\n<b> : 0 ~ 200");
     option->expected(2);
     option->check(CLI::Validator(CLI::Range(0, 100)).application_index(0));
     option->check(CLI::Validator(CLI::Range(0, 200)).application_index(1));
