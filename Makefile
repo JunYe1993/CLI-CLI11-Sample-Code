@@ -4,7 +4,6 @@ CXXFLAG = -Wall -Werror -std=c++17
 CLI_INCLUDE = CLI/include/
 
 
-
 all: myCalculator
 
 myCalculator: cli-utility.o
