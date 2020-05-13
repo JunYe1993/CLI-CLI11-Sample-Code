@@ -9,7 +9,7 @@ all: myCalculator
 myCalculator: cli-utility.o
 	$(CXX) $(CXXFLAG) -o $@ $<
 
-cli-utility.o: cli-utility.cpp
+cli-utility.o: cli-utility.cpp CLI11.hpp
 	$(CXX) -I$(CLI_INCLUDE) $(CXXFLAG) -c $<
 
 .PHONY: clean

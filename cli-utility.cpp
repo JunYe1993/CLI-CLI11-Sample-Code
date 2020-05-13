@@ -1,24 +1,38 @@
 #include <iostream>
 #include <vector>
+#include <map>
 #include "CLI11.hpp"
 // #include <CLI/CLI.hpp>
 
 
 #define UTIL_VERSION "0.0.1"
 
-
 typedef int (*FnPtr)(CLI::Option*);
 
-struct util_cmd_options
+struct util_cmd_option
 {
     CLI::Option *option;
     FnPtr option_func;
 };
 
-struct util_cmd_inits
+class MyFormatter : public CLI::Formatter 
 {
-    const char* opt_name;
-    const char* opt_descript;
+    protected:
+        std::string get_option_name(std::string str) const
+        {
+            std::map<std::string, std::string> cmd_table;
+            cmd_table["--help"]    = "";
+            cmd_table["--version"] = "";
+            cmd_table["--add"]     = " <a> <b>";
+            return cmd_table[str];
+        }
+
+    public:
+        MyFormatter() : Formatter() {}
+        std::string make_option_opts(const CLI::Option * opt) const override 
+        { 
+            return get_option_name(opt->get_name()); 
+        }
 };
 
 static int
@@ -37,7 +51,7 @@ add(CLI::Option* opt)
 }
 
 static int
-cmd_init(CLI::App* app, std::vector<struct util_cmd_options>* opts)
+cmd_init(CLI::App* app, std::vector<struct util_cmd_option>* opts)
 {
     CLI::Option *option;
 
@@ -53,16 +67,21 @@ cmd_init(CLI::App* app, std::vector<struct util_cmd_options>* opts)
     return 0;
 }
 
-int
+int 
 main(int argc, char **argv) 
 {
-    CLI::App app("Calculator Utility");
-    std::vector<struct util_cmd_options> opts;
+    auto fmt = std::make_shared<MyFormatter>();
+    fmt->column_width(20);
 
+    CLI::App app("Calculator Utility");
+    app.failure_message(CLI::FailureMessage::help);
+    app.formatter(fmt);
+
+    std::vector< struct util_cmd_option > opts;
     cmd_init(&app, &opts);
 
     CLI11_PARSE(app, argc, argv);
-    
+
     for (size_t i = 0; i < opts.size(); i++) {
         if (*(opts[i].option)) {
             opts[i].option_func(opts[i].option);
