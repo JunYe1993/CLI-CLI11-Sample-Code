@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <vector>
 #include <map>
 #include <CLI/CLI.hpp>
@@ -23,6 +24,7 @@ class MyFormatter : public CLI::Formatter
             cmd_table["--help"]    = "";
             cmd_table["--version"] = "";
             cmd_table["--add"]     = " <a> <b>";
+            cmd_table["--square"]  = " [<a>]";
             return cmd_table[str];
         }
 
@@ -44,8 +46,18 @@ version(CLI::Option* opt)
 static int 
 add(CLI::Option* opt)
 {
-    std::vector<std::string> arg = opt->results();
-    std::cout << std::stoi(arg[0]) + std::stoi(arg[1]) << "\n";
+    std::vector<int> arg;
+    opt->results(arg);
+    std::cout << arg[0] * arg[1] << "\n";
+    return 0;
+}
+
+static int 
+square(CLI::Option* opt)
+{
+    std::vector<int> arg;
+    opt->results(arg);
+    std::cout << arg[0] * arg[0] << "\n";
     return 0;
 }
 
@@ -62,6 +74,11 @@ cmd_init(CLI::App* app, std::vector<struct util_cmd_option>* opts)
     option->check(CLI::Validator(CLI::Range(0, 100)).application_index(0));
     option->check(CLI::Validator(CLI::Range(0, 200)).application_index(1));
     opts->push_back({option, add});
+
+    option = app->add_option("-s, --square", "Return a * a");
+    option->expected(0, 1);
+    option->check(CLI::Range(0, 100));
+    opts->push_back({option, square});
 
     return 0;
 }
