@@ -4,9 +4,9 @@ CXXFLAG = -Wall -Werror -std=c++17
 CLI_INCLUDE = CLI/include/
 
 
-all: myCalculator
+all: tool
 
-myCalculator: cli-utility.o
+tool: cli-utility.o
 	$(CXX) $(CXXFLAG) -o $@ $<
 
 cli-utility.o: cli-utility.cpp
@@ -15,5 +15,5 @@ cli-utility.o: cli-utility.cpp
 .PHONY: clean
 
 clean:
-	rm -rf cli-utility.o myCalculator
+	rm -rf cli-utility.o tool
 	
